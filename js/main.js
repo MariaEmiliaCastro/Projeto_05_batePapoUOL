@@ -3,13 +3,12 @@ function userLogado(userLogado){
 }
 
 function erroLogin(error){
-    console.log(error);
+    console.log(error.response);
 }
 
 function mostraMensagens(listaMensagens) {
     console.log(typeof listaMensagens)
-    let arr = listaMensagens.data;
-    console.log(arr);
+
     let mensagem = document.querySelector('.container');
     for(let i = 0; i < listaMensagens.data.length; i++){
         let from = listaMensagens.data[i].from;
@@ -18,10 +17,6 @@ function mostraMensagens(listaMensagens) {
         let type = listaMensagens.data[i].type;
         let time = listaMensagens.data[i].time;
 
-        if(type === "status"){
-            
-        } 
-        
         switch(type){
             case "status":
                 mensagem.innerHTML += `        
@@ -36,11 +31,13 @@ function mostraMensagens(listaMensagens) {
                 </div>`;
                 break;
             case "private_message":
-                if(to === userLogado){
+                if(to === username){
                     mensagem.innerHTML += `        
                     <div class="mensagem-recebida privada">
                         <p><span class="horario">${time}</span> <strong>${from}</strong> reservadamente para <strong>${to}</strong>: ${text}</p>
                     </div>`;
+                }else{
+                    console.log("Mensagem privada para outro!");
                 }
                 break;
             default:
@@ -60,13 +57,11 @@ const manterOnline = () => {
 }
 
 function buscarMensagens() {
-    setInterval(function () {
-        axios.get("https://mock-api.driven.com.br/api/v6/uol/messages")
+    axios.get("https://mock-api.driven.com.br/api/v6/uol/messages")
         .then(mostraMensagens)
         .catch(function (erro){
-            console.log(erro.response.status)
-        })
-    }, 10000);  
+            console.log("Erro na busca!" + erro.response);
+        })  
 }
 
 function enviarMensagem() {
@@ -79,24 +74,24 @@ function enviarMensagem() {
         type: "message"
     }
     axios.post("https://mock-api.driven.com.br/api/v6/uol/messages", sentObject)
-        .then(console.log("Mensagem enviada"))
-        .catch(function (error) {
-            console.log("Não deu bom!" + error.status); 
+        .then(buscarMensagens)
+        .catch(function () {
+            window.location.reload();
         });
     document.querySelector('input').value = "";
 }
 
-let mensagensIniciais;
+let mensagensBuscadas = [];
 function iniciarChat() {
 
     manterOnline();
     axios.get("https://mock-api.driven.com.br/api/v6/uol/messages")
         .then(function (response) {
-            mensagensIniciais = response.data;
-            buscarMensagens();
+            mostraMensagens(response);
+            setInterval(buscarMensagens, 30000);
         })
         .catch(function (error) {
-            console.log("Erro na primeira busca!" + error.status); 
+            console.log("Não deu bom!" + error.response);
         });
     
 }

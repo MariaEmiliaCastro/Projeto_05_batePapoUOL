@@ -3,7 +3,8 @@ function userLogado(userLogado){
 }
 
 function erroLogin(error){
-    console.log(error.response);
+    alert("Erro ao logar! Este nome já está em uso!");
+    window.location.reload();
 }
 
 function mostraMensagens(listaMensagens) {
@@ -60,13 +61,12 @@ function buscarMensagens() {
     axios.get("https://mock-api.driven.com.br/api/v6/uol/messages")
         .then(mostraMensagens)
         .catch(function (erro){
-            console.log("Erro na busca!" + erro.response);
+            console.log("Erro na busca!" , erro.response);
         })  
 }
 
 function enviarMensagem() {
     let mensagem = document.querySelector('input').value;
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA " + mensagem);
     let sentObject = {
         from: username,
         to: "Todos",
@@ -81,17 +81,16 @@ function enviarMensagem() {
     document.querySelector('input').value = "";
 }
 
-let mensagensBuscadas = [];
 function iniciarChat() {
 
     manterOnline();
     axios.get("https://mock-api.driven.com.br/api/v6/uol/messages")
         .then(function (response) {
             mostraMensagens(response);
-            setInterval(buscarMensagens, 30000);
+            setInterval(buscarMensagens, 3000);
         })
         .catch(function (error) {
-            console.log("Não deu bom!" + error.response);
+            console.log("Problema ao buscar mensagens!", error.response);
         });
     
 }
@@ -102,3 +101,4 @@ const enterChat = axios.post("https://mock-api.driven.com.br/api/v6/uol/particip
 
 enterChat.then(iniciarChat);
 enterChat.catch(erroLogin);
+

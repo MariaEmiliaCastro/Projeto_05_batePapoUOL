@@ -18,6 +18,16 @@ function mostraMensagens(listaMensagens) {
         let type = listaMensagens.data[i].type;
         let time = listaMensagens.data[i].time;
 
+        let hora = time.substring(0, 2);
+        let minutos = time.substring(2,8);
+        hora = Number(hora);
+        if(hora >= 15){
+            hora = hora - 15;
+            time = hora + minutos;
+        }else{
+            hora = hora + 9;
+            time = hora + minutos;
+        }
         switch(type){
             case "status":
                 mensagem.innerHTML += `        

@@ -53,7 +53,9 @@ const manterOnline = () => {
     setInterval(function () {
         axios.post("https://mock-api.driven.com.br/api/v6/uol/status", { name: username})
             .then(console.log("Online"))
-            .catch("Nao deu bom!")
+            .catch(function(error){
+                console.log("Problema ao manter o usuário online!", error.response);
+            });
     }, 4000);
 }
 
